@@ -1,14 +1,12 @@
+from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from fastapi import FastAPI, Depends, HTTPException, status
-
-from database import get_session, engine, Base, fill_db
-from models import Recipe, Ingredient
-from schemas import RecipeMain, RecipeDetails, RecipeCreate
-
+from database import Base, engine, fill_db, get_session
+from models import Ingredient, Recipe
+from schemas import RecipeCreate, RecipeDetails, RecipeMain
 
 app = FastAPI()
 get_session_dependency = Depends(get_session)
