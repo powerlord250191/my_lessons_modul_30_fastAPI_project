@@ -1,50 +1,56 @@
+from contextlib import asynccontextmanager
+
+from typing import Sequence
+
+from app.database import Base, engine, fill_db, get_session
 from fastapi import Depends, FastAPI, HTTPException, status
+from app.models import Ingredient, Recipe
+from app.schemas import RecipeCreate, RecipeDetails, RecipeMain
+from sqlalchemy.engine import Result, ScalarResult
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from database import Base, engine, fill_db, get_session
-from models import Ingredient, Recipe
-from schemas import RecipeCreate, RecipeDetails, RecipeMain
-
 app = FastAPI()
 get_session_dependency = Depends(get_session)
 
 
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan контекст для startup/shutdown событий"""
+    # Startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await fill_db(engine)
+
+    yield
 
 
 @app.get(
     "/recipes/",
     response_model=list[RecipeMain],
     tags=["Recipes"],
-    summary="Return list of recipes"
+    summary="Return list of recipes",
 )
 async def get_recipes(
-        session: AsyncSession = get_session_dependency
-) -> list[Recipe]:
-    res = await session.execute(select(Recipe).order_by(
-        Recipe.count_views.desc(),
-        Recipe.cooking_time
-    ))
-
-    return res.scalars().all()
+        session: AsyncSession = get_session_dependency,
+) -> Sequence[Recipe]:
+    res: Result = await session.execute(
+        select(Recipe).order_by(Recipe.count_views.desc(), Recipe.cooking_time)
+    )
+    recipes_scalars: ScalarResult[Recipe] = res.scalars()
+    return recipes_scalars.all()
 
 
 @app.get(
     "/recipes/{recipe_id}",
     response_model=RecipeDetails,
     tags=["Recipes"],
-    summary="Return one recipe"
+    summary="Return one recipe",
 )
 async def get_recipe(
-        recipe_id: int,
-        session: AsyncSession = get_session_dependency
+        recipe_id: int, session: AsyncSession = get_session_dependency
 ) -> Recipe:
     execution = await session.execute(
         select(Recipe)
@@ -56,7 +62,7 @@ async def get_recipe(
     if not recipe:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Recipe with id {recipe_id} not found"
+            detail=f"Recipe with id {recipe_id} not found",
         )
 
     recipe.count_views += 1
@@ -70,11 +76,10 @@ async def get_recipe(
     response_model=RecipeDetails,
     tags=["Recipes"],
     summary="Create new recipe",
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_recipe(
-        recipe_data: RecipeCreate,
-        session: AsyncSession = get_session_dependency
+        recipe_data: RecipeCreate, session: AsyncSession = get_session_dependency
 ) -> Recipe:
     """
     Create a new recipe with ingredients.
@@ -90,7 +95,7 @@ async def create_recipe(
             dish_name=recipe_data.dish_name,
             description=recipe_data.description,
             cooking_time=recipe_data.cooking_time,
-            count_views=0
+            count_views=0,
         )
 
         # Обрабатываем ингредиенты
@@ -128,11 +133,11 @@ async def create_recipe(
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Error creating recipe: {str(e)}"
+            detail=f"Error creating recipe: {str(e)}",
         )
     except Exception as e:
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Internal server error: {str(e)}"
+            detail=f"Internal server error: {str(e)}",
         )

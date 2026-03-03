@@ -30,12 +30,12 @@ jobs:
       - name: Install pip
         run: pip install -r requirement.txt
       - name: start linter flake-8
-        run: flake8 --exclude=.venv --max-line-length=100 --per-file-ignores=main.py:F401 *.py
+        run: flake8 --exclude=.venv --max-line-length=100 --per-file-ignores=main.py:F401 */*.py
       - name: start linter isort
         run: isort .
       - name: start linter mypy
-        run: mypy . --ignore-missing-imports --follow-imports=skip
+        run: mypy .
       - name: start linter black
-        run: black --diff --check **/*.py
+        run: black --diff --check */*.py
       - name: start tests
         run: pytest

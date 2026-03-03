@@ -1,22 +1,23 @@
-from typing import List, Optional
+from typing import AsyncGenerator, List, Optional
 
 from sqlalchemy import ForeignKey, String, Text
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
+from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
-class Base(DeclarativeBase):
-    ...
+class Base(DeclarativeBase): ...
 
 
 class RecipeIngredient(Base):
     """Ассоциативная таблица для связи многие-ко-многим с дополнительными данными"""
+
     __tablename__ = "recipe_ingredient"
 
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipes.id"), primary_key=True)
-    ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredients.id"), primary_key=True)
+    ingredient_id: Mapped[int] = mapped_column(
+        ForeignKey("ingredients.id"), primary_key=True
+    )
     quantity: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
     # Связи с родительскими таблицами
@@ -28,19 +29,20 @@ class Ingredient(Base):
     __tablename__ = "ingredients"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
-    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
+    name: Mapped[str] = mapped_column(
+        String(100), unique=True, nullable=False, index=True
+    )
 
     # Связь через ассоциативную таблицу
     recipe_ingredients: Mapped[List["RecipeIngredient"]] = relationship(
-        back_populates="ingredient",
-        cascade="all, delete-orphan"
+        back_populates="ingredient", cascade="all, delete-orphan"
     )
 
     # Прокси для прямого доступа к рецептам
-    recipes: Mapped[List["Recipe"]] = association_proxy(
+    recipes: AssociationProxy[List["Recipe"]] = association_proxy(
         "recipe_ingredients",
         "recipe",
-        creator=lambda recipe_obj: RecipeIngredient(recipe=recipe_obj)
+        creator=lambda recipe_obj: RecipeIngredient(recipe=recipe_obj),
     )
 
 
@@ -55,15 +57,14 @@ class Recipe(Base):
 
     # Связь через ассоциативную таблицу
     recipe_ingredients: Mapped[List["RecipeIngredient"]] = relationship(
-        back_populates="recipe",
-        cascade="all, delete-orphan"
+        back_populates="recipe", cascade="all, delete-orphan"
     )
 
     # Прокси для прямого доступа к ингредиентам
-    ingredients: Mapped[List["Ingredient"]] = association_proxy(
+    ingredients: AssociationProxy[List["Ingredient"]] = association_proxy(
         "recipe_ingredients",
         "ingredient",
-        creator=lambda ingredient_obj: RecipeIngredient(ingredient=ingredient_obj)
+        creator=lambda ingredient_obj: RecipeIngredient(ingredient=ingredient_obj),
     )
 
 
@@ -75,7 +76,7 @@ AsyncSessionFactory = async_sessionmaker(
 )
 
 
-async def get_session() -> AsyncSession:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """
     Асинхронный генератор для получения сессии БД.
     """
@@ -112,25 +113,25 @@ async def fill_db(eng):
                 dish_name="Салат с огурцом и помидором",
                 cooking_time=7,
                 description="Огурец, помидор, лук помыть "
-                            "и порезать средними кусками."
-                            " Добавить майонез, соль, перемешать.",
-                count_views=0
+                "и порезать средними кусками."
+                " Добавить майонез, соль, перемешать.",
+                count_views=0,
             ),
             Recipe(
                 dish_name="Жареные пельмени",
                 cooking_time=15,
                 description="Замороженные пельмени выложить на сковороду,"
-                            " смазанную сливочным маслом."
-                            " Жарить 15 минут с обеих сторон на среднем огне.",
-                count_views=0
+                " смазанную сливочным маслом."
+                " Жарить 15 минут с обеих сторон на среднем огне.",
+                count_views=0,
             ),
             Recipe(
                 dish_name="Каша овсяная",
                 cooking_time=25,
                 description="В кастрюлю положить овсянку с молоком в соотношении 1:3,"
-                            " варить 20 мин на слабом огне. Выключить огонь, "
-                            "дать постоять 5 минут под крышкой. Добавить кусок масла.",
-                count_views=0
+                " варить 20 мин на слабом огне. Выключить огонь, "
+                "дать постоять 5 минут под крышкой. Добавить кусок масла.",
+                count_views=0,
             ),
         ]
 
@@ -143,14 +144,20 @@ async def fill_db(eng):
         salad = recipes_data[0]
         salad.recipe_ingredients = [
             RecipeIngredient(ingredient=ingredients_data[0], quantity="2 шт"),  # Огурец
-            RecipeIngredient(ingredient=ingredients_data[1], quantity="3 шт"),  # Помидор
-            RecipeIngredient(ingredient=ingredients_data[2], quantity="щепотка"),  # Соль
+            RecipeIngredient(
+                ingredient=ingredients_data[1], quantity="3 шт"
+            ),  # Помидор
+            RecipeIngredient(
+                ingredient=ingredients_data[2], quantity="щепотка"
+            ),  # Соль
         ]
 
         # Рецепт 2: Пельмени
         pelmeni_recipe = recipes_data[1]
         pelmeni_recipe.recipe_ingredients = [
-            RecipeIngredient(ingredient=ingredients_data[3], quantity="500г"),  # Пельмени
+            RecipeIngredient(
+                ingredient=ingredients_data[3], quantity="500г"
+            ),  # Пельмени
             RecipeIngredient(ingredient=ingredients_data[4], quantity="50г"),  # Масло
         ]
 
@@ -158,7 +165,9 @@ async def fill_db(eng):
         porridge = recipes_data[2]
         porridge.recipe_ingredients = [
             RecipeIngredient(ingredient=ingredients_data[5], quantity="100г"),  # Хлопья
-            RecipeIngredient(ingredient=ingredients_data[6], quantity="300мл"),  # Молоко
+            RecipeIngredient(
+                ingredient=ingredients_data[6], quantity="300мл"
+            ),  # Молоко
             RecipeIngredient(ingredient=ingredients_data[4], quantity="20г"),  # Масло
         ]
 

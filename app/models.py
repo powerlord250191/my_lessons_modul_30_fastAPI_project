@@ -1,16 +1,18 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Table
-from sqlalchemy.orm import (Mapped, declarative_base, mapped_column,
-                            relationship)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
+
 
 # Ассоциативная таблица для связи многие-ко-многим
 recipe_ingredient = Table(
-    'recipe_ingredient',
+    "recipe_ingredient",
     Base.metadata,
-    Column('recipe_id', Integer, ForeignKey('recipes.id'), primary_key=True),
-    Column('ingredient_id', Integer, ForeignKey('ingredients.id'), primary_key=True),
-    Column('quantity', String(50), nullable=True)  # количество ингредиента
+    Column("recipe_id", Integer, ForeignKey("recipes.id"), primary_key=True),
+    Column("ingredient_id", Integer, ForeignKey("ingredients.id"), primary_key=True),
+    Column("quantity", String(50), nullable=True),  # количество ингредиента
 )
 
 
@@ -18,13 +20,13 @@ class Ingredient(Base):
     __tablename__ = "ingredients"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
+    name: Mapped[str] = mapped_column(
+        String(100), unique=True, nullable=False, index=True
+    )
 
     # Связь с рецептами
     recipes = relationship(
-        "Recipe",
-        secondary=recipe_ingredient,
-        back_populates="ingredients"
+        "Recipe", secondary=recipe_ingredient, back_populates="ingredients"
     )
 
 
@@ -39,7 +41,5 @@ class Recipe(Base):
 
     # Связь с ингредиентами через ассоциативную таблицу
     ingredients = relationship(
-        "Ingredient",
-        secondary=recipe_ingredient,
-        back_populates="recipes"
+        "Ingredient", secondary=recipe_ingredient, back_populates="recipes"
     )
