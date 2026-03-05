@@ -28,7 +28,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
       - name: Install pip
-        run: pip install -r requirement.txt
+        run: pip install -r requirements.txt
       - name: start linter flake-8
         run: flake8 --exclude=.venv --max-line-length=100 --per-file-ignores=main.py:F401 */*.py
       - name: start linter isort
