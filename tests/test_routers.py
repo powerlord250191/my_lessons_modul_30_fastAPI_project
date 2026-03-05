@@ -10,6 +10,9 @@ from app.models import Ingredient, Recipe
 from .factories import RecipeCreateFactory
 
 
+"""Тесты приложения"""
+
+
 class TestGetRecipes:
     """Тесты для эндпоинта GET /recipes/"""
 
