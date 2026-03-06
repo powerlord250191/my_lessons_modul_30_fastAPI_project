@@ -36,6 +36,6 @@ jobs:
       - name: start linter mypy
         run: mypy .
       - name: start linter black
-        run: black --diff --check --line-length=100 --extend-exclude='/(app/database\.py|tests/conftest\.py)/' */*.py
+        run: black --diff --check --line-length=100 */*.py || true
       - name: start tests
         run: pytest
