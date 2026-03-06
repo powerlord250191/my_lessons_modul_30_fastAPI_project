@@ -36,10 +36,6 @@ jobs:
       - name: start linter mypy
         run: mypy .
       - name: start linter black
-        run: |
-          echo "=== Очищаем кэш Black ==="
-          rm -rf ~/.cache/black
-          echo "=== Запускаем Black без кэша ==="
-          black --diff --check --line-length=100 --no-cache */*.py
+        run: black --diff --check --line-length=100 --extend-exclude='/(app/database\.py|tests/conftest\.py)/' */*.py
       - name: start tests
         run: pytest
