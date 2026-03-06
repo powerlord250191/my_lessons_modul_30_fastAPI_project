@@ -8,7 +8,9 @@ from sqlalchemy.future import select
 
 from app.models import Ingredient, Recipe
 
-"""Тесты приложения"""
+"""
+Тесты приложения Pytest
+"""
 
 
 class TestGetRecipes:
