@@ -21,7 +21,7 @@ class RecipeIngredient(Base):
     )
     quantity: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
-    # Связи с родительскими таблицами
+    # Связи с родительскими таблицами.
     recipe: Mapped["Recipe"] = relationship(back_populates="recipe_ingredients")
     ingredient: Mapped["Ingredient"] = relationship(back_populates="recipe_ingredients")
 
