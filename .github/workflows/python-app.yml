@@ -26,14 +26,14 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
       - name: Очистить кэш
         run: |
-          - rm -rf ~/.cache/pip
-          - rm -rf ~/.cache/black
-          - find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-          - find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
-          - find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-      - uses: actions/checkout@v4
+          rm -rf ~/.cache/pip
+          rm -rf ~/.cache/black
+          find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+          find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
+          find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
       - name: Install pip
         run: pip install -r requirements.txt
       - name: Принудительная загрузка свежего кода
