@@ -35,14 +35,8 @@ jobs:
         run: isort .
       - name: start linter mypy
         run: mypy .
-      - name: Проверка форматирования (Black)
-        run: |
-          echo "=== Версия Black ==="
-          black --version
-          echo "=== Содержимое app/database.py (первые 20 строк) ==="
-          cat app/database.py | head -20
-          echo "=== Запуск проверки ==="
-          black --diff --check */*.py
+      - name: Диагностика
+        run: black --version && echo "---" && cat app/database.py | head -20
       - name: start linter black
         run: black --diff --check --line-length=100 */*.py
       - name: start tests
