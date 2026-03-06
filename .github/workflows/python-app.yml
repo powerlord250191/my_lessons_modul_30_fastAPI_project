@@ -27,13 +27,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-      - name: Очистить кэш
-        run: |
-          rm -rf ~/.cache/pip
-          rm -rf ~/.cache/black
-          find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-          find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
-          find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
       - name: Install pip
         run: pip install -r requirements.txt
       - name: start linter flake-8
@@ -43,8 +36,8 @@ jobs:
       - name: start linter mypy
         run: mypy .
       - name: start linter black
-        run: |
-          rm -rf ~/.cache/black
+        run: rm -rf ~/.cache/black
+          echo "=== Запускаем Black без кэша ==="
           black --diff --check --line-length=100 --no-cache */*.py
       - name: start tests
         run: pytest
