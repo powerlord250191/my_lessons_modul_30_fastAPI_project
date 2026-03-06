@@ -36,7 +36,10 @@ jobs:
       - name: start linter mypy
         run: mypy .
       - name: Диагностика
-        run: black --version echo "---" cat app/database.py | head -20
+        run: |
+         black --version
+         echo "---"
+         cat app/database.py | head -20
       - name: start linter black
         run: black --diff --check --line-length=100 */*.py
       - name: start tests
