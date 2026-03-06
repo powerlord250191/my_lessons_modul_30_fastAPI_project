@@ -29,6 +29,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install pip
         run: pip install -r requirements.txt
+      - name: Принудительная загрузка свежего кода
+        run: |
+          git fetch --depth=1 origin master
+          git reset --hard origin/master
       - name: start linter flake-8
         run: flake8 --exclude=.venv --max-line-length=100 --per-file-ignores=main.py:F401,app/database.py:E701 */*.py
       - name: start linter isort
