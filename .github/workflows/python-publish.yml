@@ -36,6 +36,6 @@ jobs:
       - name: start linter mypy
         run: mypy .
       - name: start linter black
-        run: black --diff --check */*.py
+        run: black --diff --check --line-length=100 */*.py
       - name: start tests
         run: pytest
