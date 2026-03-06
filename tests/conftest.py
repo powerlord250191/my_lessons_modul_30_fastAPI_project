@@ -5,16 +5,11 @@ import pytest
 import pytest_asyncio
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.database import Base, get_session
 from app.models import Ingredient, Recipe
 from app.routers import app as fastapi_app
-
 
 # Тестовая база данных
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test_recipes.db"
@@ -105,13 +100,15 @@ async def sample_ingredients(test_session: AsyncSession) -> List[Ingredient]:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def sample_recipe(test_session: AsyncSession, sample_ingredients: List[Ingredient]) -> Recipe:
+async def sample_recipe(
+    test_session: AsyncSession, sample_ingredients: List[Ingredient]
+) -> Recipe:
     """Создает тестовый рецепт"""
     recipe = Recipe(
         dish_name="Тестовый салат",
         description="Описание тестового салата",
         cooking_time=15,
-        count_views=0
+        count_views=0,
     )
 
     test_session.add(recipe)
@@ -126,7 +123,7 @@ async def sample_recipe(test_session: AsyncSession, sample_ingredients: List[Ing
         recipe_ingredient = RecipeIngredient(
             recipe_id=recipe.id,
             ingredient_id=ingredient.id,
-            quantity="по вкусу"  # или любое значение по умолчанию
+            quantity="по вкусу",  # или любое значение по умолчанию
         )
         test_session.add(recipe_ingredient)
 

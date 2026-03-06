@@ -7,8 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.models import Ingredient, Recipe
-from .factories import RecipeCreateFactory
-
 
 """Тесты приложения"""
 
@@ -26,7 +24,7 @@ class TestGetRecipes:
         assert len(data) == 0
 
     async def test_get_recipes_with_data(
-            self, client: AsyncClient, sample_recipe: Recipe
+        self, client: AsyncClient, sample_recipe: Recipe
     ):
         """Тест получения списка рецептов с данными"""
         response = await client.get("/recipes/")
@@ -42,7 +40,7 @@ class TestGetRecipes:
         assert recipe["count_views"] == 0
 
     async def test_get_recipes_ordered_by_views(
-            self, client: AsyncClient, test_session: AsyncSession
+        self, client: AsyncClient, test_session: AsyncSession
     ):
         """Тест сортировки рецептов по просмотрам"""
         # Создаем рецепты с разным количеством просмотров
@@ -75,9 +73,7 @@ class TestGetRecipe:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"].lower()
 
-    async def test_get_recipe_success(
-            self, client: AsyncClient, sample_recipe: Recipe
-    ):
+    async def test_get_recipe_success(self, client: AsyncClient, sample_recipe: Recipe):
         """Тест успешного получения рецепта"""
         response = await client.get(f"/recipes/{sample_recipe.id}")
 
@@ -91,7 +87,7 @@ class TestGetRecipe:
         assert data["count_views"] == 1  # Просмотры увеличились на 1
 
     async def test_get_recipe_increments_views(
-            self, client: AsyncClient, sample_recipe: Recipe, test_session: AsyncSession
+        self, client: AsyncClient, sample_recipe: Recipe, test_session: AsyncSession
     ):
         """Тест увеличения счетчика просмотров"""
         initial_views = sample_recipe.count_views
@@ -104,14 +100,15 @@ class TestGetRecipe:
         assert sample_recipe.count_views == initial_views + 1
 
     async def test_get_recipe_with_ingredients(
-            self, client: AsyncClient, test_session: AsyncSession, sample_ingredients: List[Ingredient]
+        self,
+        client: AsyncClient,
+        test_session: AsyncSession,
+        sample_ingredients: List[Ingredient],
     ):
         """Тест получения рецепта с ингредиентами"""
         # Создаем рецепт с ингредиентами
         recipe = Recipe(
-            dish_name="Салат с ингредиентами",
-            cooking_time=10,
-            count_views=0
+            dish_name="Салат с ингредиентами", cooking_time=10, count_views=0
         )
         recipe.ingredients = sample_ingredients
 
@@ -144,7 +141,7 @@ class TestCreateRecipe:
             "ingredients": [
                 {"name": "Ингредиент 1"},
                 {"name": "Ингредиент 2"},
-            ]
+            ],
         }
 
         response = await client.post("/recipes/", json=recipe_data)
@@ -168,7 +165,7 @@ class TestCreateRecipe:
                 {"name": "Ингредиент 1"},
                 {"name": "Ингредиент 2"},
                 {"name": "Ингредиент 3"},
-            ]
+            ],
         }
 
         response = await client.post("/recipes/", json=recipe_data)
@@ -182,7 +179,7 @@ class TestCreateRecipe:
         assert len(data["ingredients"]) == 3
 
     async def test_create_recipe_with_existing_ingredients(
-            self, client: AsyncClient, sample_ingredients: List[Ingredient]
+        self, client: AsyncClient, sample_ingredients: List[Ingredient]
     ):
         """Тест создания рецепта с существующими ингредиентами"""
         recipe_data = {
@@ -192,7 +189,7 @@ class TestCreateRecipe:
                 {"name": sample_ingredients[0].name},
                 {"name": sample_ingredients[1].name},
                 {"name": "Новый ингредиент"},
-            ]
+            ],
         }
 
         response = await client.post("/recipes/", json=recipe_data)
@@ -211,7 +208,7 @@ class TestCreateRecipe:
         recipe_data = {
             "dish_name": "Рецепт без ингредиентов",
             "cooking_time": 15,
-            "ingredients": []
+            "ingredients": [],
         }
 
         response = await client.post("/recipes/", json=recipe_data)
@@ -221,10 +218,7 @@ class TestCreateRecipe:
     async def test_create_recipe_invalid_data(self, client: AsyncClient):
         """Тест создания рецепта с невалидными данными"""
         # Нет обязательного поля dish_name
-        recipe_data = {
-            "cooking_time": 15,
-            "ingredients": [{"name": "Ингредиент"}]
-        }
+        recipe_data = {"cooking_time": 15, "ingredients": [{"name": "Ингредиент"}]}
 
         response = await client.post("/recipes/", json=recipe_data)
 
@@ -236,7 +230,7 @@ class TestCreateRecipe:
         recipe_data_1 = {
             "dish_name": "Уникальный рецепт",
             "cooking_time": 20,
-            "ingredients": [{"name": "Ингредиент"}]
+            "ingredients": [{"name": "Ингредиент"}],
         }
 
         response1 = await client.post("/recipes/", json=recipe_data_1)
@@ -246,7 +240,7 @@ class TestCreateRecipe:
         recipe_data_2 = {
             "dish_name": "Уникальный рецепт",
             "cooking_time": 30,
-            "ingredients": [{"name": "Другой ингредиент"}]
+            "ingredients": [{"name": "Другой ингредиент"}],
         }
 
         response2 = await client.post("/recipes/", json=recipe_data_2)
@@ -259,7 +253,7 @@ class TestIntegration:
     """Интеграционные тесты для проверки полного цикла работы"""
 
     async def test_full_recipe_workflow(
-            self, client: AsyncClient, test_session: AsyncSession
+        self, client: AsyncClient, test_session: AsyncSession
     ):
         """Тест полного цикла: создание, получение списка, получение деталей"""
 
@@ -271,7 +265,7 @@ class TestIntegration:
             "ingredients": [
                 {"name": "Ингредиент A"},
                 {"name": "Ингредиент B"},
-            ]
+            ],
         }
 
         create_response = await client.post("/recipes/", json=recipe_data)

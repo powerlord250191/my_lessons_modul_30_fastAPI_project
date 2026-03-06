@@ -11,7 +11,7 @@ class IngredientFactory(factory.Factory):
     class Meta:
         model = Ingredient
 
-    name = Faker('word')
+    name = Faker("word")
 
 
 class RecipeFactory(factory.Factory):
@@ -20,9 +20,9 @@ class RecipeFactory(factory.Factory):
     class Meta:
         model = Recipe
 
-    dish_name = Faker('sentence', nb_words=3)
-    description = Faker('text', max_nb_chars=200)
-    cooking_time = Faker('random_int', min=5, max=120)
+    dish_name = Faker("sentence", nb_words=3)
+    description = Faker("text", max_nb_chars=200)
+    cooking_time = Faker("random_int", min=5, max=120)
     count_views = 0
 
 
@@ -32,7 +32,7 @@ class IngredientCreateFactory(factory.Factory):
     class Meta:
         model = IngredientCreate
 
-    name = Faker('word')
+    name = Faker("word")
 
 
 class RecipeCreateFactory(factory.Factory):
@@ -41,9 +41,9 @@ class RecipeCreateFactory(factory.Factory):
     class Meta:
         model = RecipeCreate
 
-    dish_name = Faker('sentence', nb_words=3)
-    description = Faker('text', max_nb_chars=200)
-    cooking_time = Faker('random_int', min=5, max=120)
+    dish_name = Faker("sentence", nb_words=3)
+    description = Faker("text", max_nb_chars=200)
+    cooking_time = Faker("random_int", min=5, max=120)
 
     @factory.post_generation
     def ingredients(self, create, extracted, **kwargs):
@@ -51,9 +51,15 @@ class RecipeCreateFactory(factory.Factory):
         if not extracted:
             # Создаем ингредиенты по умолчанию
             self.ingredients = [
-                IngredientCreate(name=Faker('word').evaluate(None, None, {"locale": None})),
-                IngredientCreate(name=Faker('word').evaluate(None, None, {"locale": None})),
-                IngredientCreate(name=Faker('word').evaluate(None, None, {"locale": None})),
+                IngredientCreate(
+                    name=Faker("word").evaluate(None, None, {"locale": None})
+                ),
+                IngredientCreate(
+                    name=Faker("word").evaluate(None, None, {"locale": None})
+                ),
+                IngredientCreate(
+                    name=Faker("word").evaluate(None, None, {"locale": None})
+                ),
             ]
         else:
             self.ingredients = extracted

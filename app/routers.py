@@ -1,16 +1,16 @@
 from contextlib import asynccontextmanager
-
 from typing import Sequence
 
-from app.database import Base, engine, fill_db, get_session
 from fastapi import Depends, FastAPI, HTTPException, status
-from app.models import Ingredient, Recipe
-from app.schemas import RecipeCreate, RecipeDetails, RecipeMain
 from sqlalchemy.engine import Result, ScalarResult
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+
+from app.database import Base, engine, fill_db, get_session
+from app.models import Ingredient, Recipe
+from app.schemas import RecipeCreate, RecipeDetails, RecipeMain
 
 app = FastAPI()
 get_session_dependency = Depends(get_session)
@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
     summary="Return list of recipes",
 )
 async def get_recipes(
-        session: AsyncSession = get_session_dependency,
+    session: AsyncSession = get_session_dependency,
 ) -> Sequence[Recipe]:
     res: Result = await session.execute(
         select(Recipe).order_by(Recipe.count_views.desc(), Recipe.cooking_time)
@@ -50,7 +50,7 @@ async def get_recipes(
     summary="Return one recipe",
 )
 async def get_recipe(
-        recipe_id: int, session: AsyncSession = get_session_dependency
+    recipe_id: int, session: AsyncSession = get_session_dependency
 ) -> Recipe:
     execution = await session.execute(
         select(Recipe)
@@ -79,7 +79,7 @@ async def get_recipe(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_recipe(
-        recipe_data: RecipeCreate, session: AsyncSession = get_session_dependency
+    recipe_data: RecipeCreate, session: AsyncSession = get_session_dependency
 ) -> Recipe:
     """
     Create a new recipe with ingredients.
