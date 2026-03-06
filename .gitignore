@@ -1,1 +1,4 @@
 app/recipes.db
+app/__pycache__
+.idea/
+tests/
