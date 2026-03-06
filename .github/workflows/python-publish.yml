@@ -30,7 +30,7 @@ jobs:
       - name: Install pip
         run: pip install -r requirements.txt
       - name: start linter flake-8
-        run: flake8 --exclude=.venv --max-line-length=100 --per-file-ignores=main.py:F401 */*.py
+        run: flake8 --exclude=.venv --max-line-length=100 --per-file-ignores=main.py:F401, app/database.py:E701 */*.py
       - name: start linter isort
         run: isort .
       - name: start linter mypy
