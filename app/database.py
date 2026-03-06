@@ -16,9 +16,7 @@ class RecipeIngredient(Base):
     __tablename__ = "recipe_ingredient"
 
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipes.id"), primary_key=True)
-    ingredient_id: Mapped[int] = mapped_column(
-        ForeignKey("ingredients.id"), primary_key=True
-    )
+    ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredients.id"), primary_key=True)
     quantity: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
     # Связи с родительскими таблицами.
@@ -30,9 +28,7 @@ class Ingredient(Base):
     __tablename__ = "ingredients"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
-    name: Mapped[str] = mapped_column(
-        String(100), unique=True, nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
 
     # Связь через ассоциативную таблицу
     recipe_ingredients: Mapped[List["RecipeIngredient"]] = relationship(
@@ -72,9 +68,7 @@ class Recipe(Base):
 # Создаем движок и фабрику сессий
 DATABASE_URL = "sqlite+aiosqlite:///./recipes.db"
 engine = create_async_engine(DATABASE_URL, echo=True)
-AsyncSessionFactory = async_sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
+AsyncSessionFactory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
@@ -145,20 +139,14 @@ async def fill_db(eng):
         salad = recipes_data[0]
         salad.recipe_ingredients = [
             RecipeIngredient(ingredient=ingredients_data[0], quantity="2 шт"),  # Огурец
-            RecipeIngredient(
-                ingredient=ingredients_data[1], quantity="3 шт"
-            ),  # Помидор
-            RecipeIngredient(
-                ingredient=ingredients_data[2], quantity="щепотка"
-            ),  # Соль
+            RecipeIngredient(ingredient=ingredients_data[1], quantity="3 шт"),  # Помидор
+            RecipeIngredient(ingredient=ingredients_data[2], quantity="щепотка"),  # Соль
         ]
 
         # Рецепт 2: Пельмени
         pelmeni_recipe = recipes_data[1]
         pelmeni_recipe.recipe_ingredients = [
-            RecipeIngredient(
-                ingredient=ingredients_data[3], quantity="500г"
-            ),  # Пельмени
+            RecipeIngredient(ingredient=ingredients_data[3], quantity="500г"),  # Пельмени
             RecipeIngredient(ingredient=ingredients_data[4], quantity="50г"),  # Масло
         ]
 
@@ -166,9 +154,7 @@ async def fill_db(eng):
         porridge = recipes_data[2]
         porridge.recipe_ingredients = [
             RecipeIngredient(ingredient=ingredients_data[5], quantity="100г"),  # Хлопья
-            RecipeIngredient(
-                ingredient=ingredients_data[6], quantity="300мл"
-            ),  # Молоко
+            RecipeIngredient(ingredient=ingredients_data[6], quantity="300мл"),  # Молоко
             RecipeIngredient(ingredient=ingredients_data[4], quantity="20г"),  # Масло
         ]
 

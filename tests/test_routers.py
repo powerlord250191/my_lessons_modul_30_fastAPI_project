@@ -25,9 +25,7 @@ class TestGetRecipes:
         assert isinstance(data, list)
         assert len(data) == 0
 
-    async def test_get_recipes_with_data(
-        self, client: AsyncClient, sample_recipe: Recipe
-    ):
+    async def test_get_recipes_with_data(self, client: AsyncClient, sample_recipe: Recipe):
         """Тест получения списка рецептов с данными"""
         response = await client.get("/recipes/")
 
@@ -109,9 +107,7 @@ class TestGetRecipe:
     ):
         """Тест получения рецепта с ингредиентами"""
         # Создаем рецепт с ингредиентами
-        recipe = Recipe(
-            dish_name="Салат с ингредиентами", cooking_time=10, count_views=0
-        )
+        recipe = Recipe(dish_name="Салат с ингредиентами", cooking_time=10, count_views=0)
         recipe.ingredients = sample_ingredients
 
         test_session.add(recipe)
@@ -254,9 +250,7 @@ class TestCreateRecipe:
 class TestIntegration:
     """Интеграционные тесты для проверки полного цикла работы"""
 
-    async def test_full_recipe_workflow(
-        self, client: AsyncClient, test_session: AsyncSession
-    ):
+    async def test_full_recipe_workflow(self, client: AsyncClient, test_session: AsyncSession):
         """Тест полного цикла: создание, получение списка, получение деталей"""
 
         # 1. Создаем рецепт
@@ -297,9 +291,7 @@ class TestIntegration:
         assert recipe_detail["count_views"] == 1
 
         # 5. Проверяем данные в базе
-        result = await test_session.execute(
-            select(Recipe).filter(Recipe.id == recipe_id)
-        )
+        result = await test_session.execute(select(Recipe).filter(Recipe.id == recipe_id))
         db_recipe = result.scalars().first()
         assert db_recipe is not None
         assert db_recipe.count_views == 1

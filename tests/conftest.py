@@ -100,9 +100,7 @@ async def sample_ingredients(test_session: AsyncSession) -> List[Ingredient]:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def sample_recipe(
-    test_session: AsyncSession, sample_ingredients: List[Ingredient]
-) -> Recipe:
+async def sample_recipe(test_session: AsyncSession, sample_ingredients: List[Ingredient]) -> Recipe:
     """Создает тестовый рецепт"""
     recipe = Recipe(
         dish_name="Тестовый салат",

@@ -47,6 +47,4 @@ class RecipeDetails(RecipeMain):
 
 
 class RecipeCreate(RecipeBase):
-    ingredients: List[IngredientCreate] = Field(
-        min_length=1, description="List of ingredients"
-    )
+    ingredients: List[IngredientCreate] = Field(min_length=1, description="List of ingredients")

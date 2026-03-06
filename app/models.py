@@ -20,14 +20,10 @@ class Ingredient(Base):
     __tablename__ = "ingredients"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(
-        String(100), unique=True, nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
 
     # Связь с рецептами
-    recipes = relationship(
-        "Recipe", secondary=recipe_ingredient, back_populates="ingredients"
-    )
+    recipes = relationship("Recipe", secondary=recipe_ingredient, back_populates="ingredients")
 
 
 class Recipe(Base):
@@ -40,6 +36,4 @@ class Recipe(Base):
     count_views: Mapped[int] = mapped_column(default=0)  # количество просмотров
 
     # Связь с ингредиентами через ассоциативную таблицу
-    ingredients = relationship(
-        "Ingredient", secondary=recipe_ingredient, back_populates="recipes"
-    )
+    ingredients = relationship("Ingredient", secondary=recipe_ingredient, back_populates="recipes")

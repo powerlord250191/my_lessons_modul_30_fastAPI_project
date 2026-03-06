@@ -49,13 +49,9 @@ async def get_recipes(
     tags=["Recipes"],
     summary="Return one recipe",
 )
-async def get_recipe(
-    recipe_id: int, session: AsyncSession = get_session_dependency
-) -> Recipe:
+async def get_recipe(recipe_id: int, session: AsyncSession = get_session_dependency) -> Recipe:
     execution = await session.execute(
-        select(Recipe)
-        .filter(Recipe.id == recipe_id)
-        .options(selectinload(Recipe.ingredients))
+        select(Recipe).filter(Recipe.id == recipe_id).options(selectinload(Recipe.ingredients))
     )
     recipe = execution.scalars().first()
 

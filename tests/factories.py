@@ -51,15 +51,9 @@ class RecipeCreateFactory(factory.Factory):
         if not extracted:
             # Создаем ингредиенты по умолчанию
             self.ingredients = [
-                IngredientCreate(
-                    name=Faker("word").evaluate(None, None, {"locale": None})
-                ),
-                IngredientCreate(
-                    name=Faker("word").evaluate(None, None, {"locale": None})
-                ),
-                IngredientCreate(
-                    name=Faker("word").evaluate(None, None, {"locale": None})
-                ),
+                IngredientCreate(name=Faker("word").evaluate(None, None, {"locale": None})),
+                IngredientCreate(name=Faker("word").evaluate(None, None, {"locale": None})),
+                IngredientCreate(name=Faker("word").evaluate(None, None, {"locale": None})),
             ]
         else:
             self.ingredients = extracted
